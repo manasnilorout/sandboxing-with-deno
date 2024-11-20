@@ -1,6 +1,6 @@
 import { executeSandboxed } from "./sandbox.ts";
 
-var runFunction = async (s: string, params: Record<string, any> = {}) => {
+const runFunction = async (s: string, params: Record<string, any> = {}) => {
     const paramEntries = Object.entries(params)
         .map(([key, value]) => {
             // Special handling for functions to preserve their functionality
@@ -88,7 +88,7 @@ const findNextStep = (currentStep: any, executionResult: any, input: any) => {
     return input.steps.find((step: any) => step.name === nextStepName);
 };
 
-export const executeFormula = async (input: any = sampleInput) => {
+export const executeFormula = async (input: any) => {
     const context: any = { steps: {}, triggers: {} };
 
     // Start execution from the active trigger
