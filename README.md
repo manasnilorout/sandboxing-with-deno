@@ -40,6 +40,15 @@ const steps = [
 ];
 ```
 
+### Commands
+**Run workflow:**
+
+`deno --unstable-worker-options --allow-net --allow-write --allow-read execFormula.ts`
+
+**Run tests:**
+
+`deno test sandbox_test.ts --allow-write --allow-read --allow-net=none --unstable-worker-options`
+
 ## Requirements
 
 - Deno runtime
