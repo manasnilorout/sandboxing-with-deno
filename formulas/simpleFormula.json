@@ -1,0 +1,67 @@
+{
+    "id": 105469,
+    "name": "DSF",
+    "userId": 1182054,
+    "accountId": 300233,
+    "createdDate": "2024-11-07T17:42:21Z",
+    "steps": [
+        {
+            "id": 742949,
+            "onSuccess": [
+                "c2"
+            ],
+            "onFailure": [],
+            "name": "c1",
+            "type": "httpRequest",
+            "properties": {
+                "method": "GET",
+                "url": "https://run.mocky.io/v3/f49c7e9a-bbac-4280-85e6-0c97b1671039"
+            }
+        },
+        {
+            "id": 742950,
+            "onSuccess": [
+                "mergeData"
+            ],
+            "onFailure": [],
+            "name": "c2",
+            "type": "httpRequest",
+            "properties": {
+                "method": "GET",
+                "url": "https://run.mocky.io/v3/23d3d8b0-4f41-4473-887e-31fa059ddd22"
+            }
+        },
+        {
+            "id": 742951,
+            "onSuccess": [],
+            "onFailure": [],
+            "name": "mergeData",
+            "type": "script",
+            "properties": {
+                "body": "var mergedData = [];\n\nconst getContactResponse = steps.c1.response.body;\nconst getNetsuiteDataResponse = steps.c2.response.body;\n\nfor (let i = 0; i < getContactResponse.length; i++) {\n  mergedData.push({\n    ...(getContactResponse[i] || {}),\n    ...(getNetsuiteDataResponse[i] || {})\n  });\n}\n\n// console.log(mergedData);\ndone(mergedData);"
+            }
+        }
+    ],
+    "triggers": [
+        {
+            "id": 80455,
+            "onSuccess": [
+                "c1"
+            ],
+            "onFailure": [],
+            "type": "manual",
+            "async": true,
+            "active": true,
+            "name": "trigger",
+            "properties": {}
+        }
+    ],
+    "method": "POST",
+    "uri": "/execute-my-faar",
+    "engine": "v3",
+    "active": true,
+    "debugLoggingEnabled": false,
+    "singleThreaded": false,
+    "api": "POST /execute-my-faar",
+    "configuration": []
+}
