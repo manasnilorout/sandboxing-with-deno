@@ -1,4 +1,4 @@
-import { executeSandboxed } from "./sandbox.ts";
+import { executeSandboxed } from "./SandboxWorkerPool.ts";
 
 const runFunction = async (s: string, params: Record<string, any> = {}) => {
     const paramEntries = Object.entries(params)
@@ -60,21 +60,30 @@ const executeScript = async (script: string, context: any) => {
 };
 
 const executeStep = async (step: any, input: any, context: any) => {
-    console.log(`Executing step - ${step.id} - ${step.name}`);
+    const startTime = performance.now();
     try {
+        let result;
         switch (step.type) {
             case "httpRequest": {
-                const { success, result } = await makeApiCall(step.properties.url, step.properties.method, step.properties.body);
-                return { success, ...result };
+                const response = await makeApiCall(step.properties.url, step.properties.method, step.properties.body);
+                result = { success: response.success, ...response.result };
+                break;
             }
             case "script": {
-                const { success, result } = await executeScript(step.properties.body, context);
-                return { success, result };
+                const scriptResult = await executeScript(step.properties.body, context);
+                result = { success: scriptResult.success, result: scriptResult.result };
+                break;
             }
             default:
-                return { success: true };
+                result = { success: true };
         }
+        
+        const executionTime = Math.round(performance.now() - startTime);
+        console.log(`Step ${step.id} - ${step.name} completed in ${executionTime}ms`);
+        return result;
     } catch (error) {
+        const executionTime = Math.round(performance.now() - startTime);
+        console.error(`Step ${step.id} - ${step.name} failed after ${executionTime}ms`);
         return { success: false, error };
     }
 };
