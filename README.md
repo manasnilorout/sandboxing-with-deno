@@ -45,6 +45,10 @@ const steps = [
 
 `deno --unstable-worker-options --allow-net --allow-write --allow-read execFormula.ts`
 
+**Run workflow:**
+
+`deno run server`
+
 **Run tests:**
 
 `deno test sandbox_test.ts --allow-write --allow-read --allow-net=none --unstable-worker-options`

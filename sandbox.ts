@@ -74,7 +74,6 @@ export async function executeSandboxed(
     worker.terminate();
     await Deno.remove(tempFile);
     return result;
-
   } catch (error: any) {
     if (timeoutId) clearTimeout(timeoutId); // Safe cleanup
     worker.terminate();
