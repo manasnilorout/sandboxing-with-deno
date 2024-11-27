@@ -29,7 +29,7 @@ const buildUrlWithQuery = (baseUrl: string, query: QueryParams): string => {
         : url.origin + url.pathname;
 };
 
-const runFunction = async (
+export const runFunction = async (
     s: string,
     params: Record<string, any> = {},
     trigger: any,

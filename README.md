@@ -53,6 +53,15 @@ const steps = [
 
 `deno test sandbox_test.ts --allow-write --allow-read --allow-net=none --unstable-worker-options`
 
+**Docker setup:**
+```sh
+# Build and start
+docker-compose up --build
+
+# Stop
+docker-compose down
+```
+
 ## Requirements
 
 - Deno runtime
