@@ -45,7 +45,7 @@ const steps = [
 
 `deno --unstable-worker-options --allow-net --allow-write --allow-read execFormula.ts`
 
-**Run workflow:**
+**Run server:**
 
 `deno run server`
 
@@ -56,10 +56,10 @@ const steps = [
 **Docker setup:**
 ```sh
 # Build and start
-docker-compose up --build
+docker compose up --build
 
 # Stop
-docker-compose down
+docker compose down
 ```
 
 ## Requirements
