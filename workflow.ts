@@ -144,26 +144,48 @@ const executeStep = async (step: any, input: any, context: any) => {
         switch (step.type) {
             case "httpRequest": {
                 let queryParameters = {};
+                let bodyParameter = null;
+
+                // Handle query parameters
                 if (step.properties.query) {
                     const queryValue = step.properties.query;
-                    
-                    // Extract step reference using regex
                     const stepRefRegex = /\${steps\.(.+?)\.(.+?)}/;
-                    const matches = queryValue.match(stepRefRegex);
-                    
-                    if (matches) {
-                        const [_, stepName, propertyPath] = matches;
-                        
-                        // Get value from context using path
+                    const queryMatches = queryValue?.match(stepRefRegex);
+
+                    if (queryMatches) {
+                        const [_, stepName, propertyPath] = queryMatches;
                         const stepResult = context.steps?.[stepName]?.result;
-                        
-                        queryParameters = stepResult[propertyPath];                        
+                        queryParameters = stepResult?.[propertyPath] ?? {};
+                    } else {
+                        // Handle static query value
+                        queryParameters = queryValue;
                     }
                 }
+
+                // Handle body parameter separately
+                if (step.properties.body) {
+                    const bodyValue = step.properties.body;
+                    const stepRefRegex = /\${steps\.(.+?)\.(.+?)}/;
+                    const bodyMatches = bodyValue?.match(stepRefRegex);
+
+                    if (bodyMatches) {
+                        const [_, stepName, propertyPath] = bodyMatches;
+                        const stepResult = context.steps?.[stepName]?.result;
+                        bodyParameter = stepResult?.[propertyPath];
+                        
+                        if (bodyParameter === undefined) {
+                            console.warn(`Could not resolve body parameter: ${stepName}.${propertyPath}`);
+                        }
+                    } else {
+                        // Handle static body value
+                        bodyParameter = bodyValue;
+                    }
+                }
+
                 const response = await makeApiCall(
                     step.properties.url,
                     step.properties.method,
-                    step.properties.body,
+                    bodyParameter ?? step.properties.body,
                     {}, // headers
                     queryParameters
                 );
