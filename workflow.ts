@@ -145,6 +145,7 @@ const executeStep = async (step: any, input: any, context: any) => {
             case "httpRequest": {
                 let queryParameters = {};
                 let bodyParameter = null;
+                let headerParameters = {};
 
                 // Handle query parameters
                 if (step.properties.query) {
@@ -182,11 +183,27 @@ const executeStep = async (step: any, input: any, context: any) => {
                     }
                 }
 
+                // Handle headers parameter
+                if (step.properties.headers) {
+                    const headerValue = step.properties.headers;
+                    const stepRefRegex = /\${steps\.(.+?)\.(.+?)}/;
+                    const headerMatches = headerValue?.match(stepRefRegex);
+
+                    if (headerMatches) {
+                        const [_, stepName, propertyPath] = headerMatches;
+                        const stepResult = context.steps?.[stepName]?.result;
+                        headerParameters = stepResult?.[propertyPath] ?? {};
+                    } else {
+                        // Handle static header value
+                        headerParameters = headerValue;
+                    }
+                }
+
                 const response = await makeApiCall(
                     step.properties.url,
                     step.properties.method,
                     bodyParameter ?? step.properties.body,
-                    {}, // headers
+                    headerParameters,
                     queryParameters
                 );
                 result = { success: response.success, ...response.result };
